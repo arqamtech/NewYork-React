@@ -56,6 +56,7 @@ class App extends Component {
     switch (choice) {
       case "default":
         myposts = this.state.posts;
+        break;
       case "createdDate":
         myposts.sort(function (a, b) {
           return new Date(b.created_date) - new Date(a.created_date);
@@ -71,6 +72,9 @@ class App extends Component {
         myposts.sort(function (a, b) {
           return new Date(b.updated_date) - new Date(a.updated_date);
         });
+        break;
+      default:
+        myposts = this.state.posts;
         break;
     }
 
@@ -91,7 +95,6 @@ class App extends Component {
     var { allposts, posts, sections } = this.state;
 
     let sortedSections = [...new Map(sections.map(o => [o.section, o])).values()];
-
 
 
 
@@ -127,35 +130,50 @@ class App extends Component {
 
 
             {posts.map(post =>
+
+
+
+
+
               <div className="card m-3" key={post.title}>
                 <div className="card-body">
 
-                  <a href={post.short_url} target="_blank" rel="noopener noreferrer">
-                    <h5 className="card-title">
-                      {post.title}
-                    </h5>
-                  </a>
+                  {post.multimedia.map((s, i) => {
+                    if (post.multimedia.indexOf(s) === 3) {
+                      return <img className="w-100" src={s.url} />
+
+                    };
+                  })
+                  }
 
 
-                  {/* <h5>{post.multimedia}</h5> */}
+
+
+
+                  <h5 className="card-title mt-2">
+                    {post.title}
+                  </h5>
+
+
+                  <div className="w-25" >
+                    <p >Section : <span className="font-weight-bold" >{post.section}</span> </p>
+                  </div>
+
+
                   <h6 className="card-subtitle mb-2 text-muted">{post.abstract}</h6>
-                  {/* <p class="font-weight-bold">{post.section}</p> */}
 
                   {post.des_facet.map(des =>
                     <p key={des} className="desc" >{des}</p>
                   )}
 
 
-                  {/* {post.multimedia.map((s, i) =>
-                  <img className="w-50" src={s.url} />
-                )} */}
-
-                  {/* {post.multimedia[4]} */}
 
 
-                  <p>{Moment(post.created_date).format('MMMM Do YYYY, h:mm:ss a')}</p>
-                  <p>{Moment(post.published_date).format('MMMM Do YYYY, h:mm:ss a')}</p>
-                  <p>{Moment(post.updated_date).format('MMMM Do YYYY, h:mm:ss a')}</p>
+
+
+                  < p > Created : {Moment(post.created_date).format('MMMM Do YYYY, h:mm:ss a')}</p>
+                  <p> Published :  {Moment(post.published_date).format('MMMM Do YYYY, h:mm:ss a')}</p>
+                  <p>Updated : {Moment(post.updated_date).format('MMMM Do YYYY, h:mm:ss a')}</p>
                 </div>
 
                 <div className="card-body"  >
