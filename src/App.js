@@ -3,72 +3,66 @@ import './App.css';
 const axios = require('axios')
 
 const API = 'https://api.nytimes.com/svc/topstories/v2/home.json?api-key=3UiqpoK1IbAXFeEGbJsfwRoc6zilXJhp';
-const DEFAULT_QUERY = '';
 
 class App extends Component {
+
   constructor(props) {
     super(props);
 
     this.state = {
+      allposts: [],
       posts: [],
-      error: null,
+      sections: [],
     };
-    this.GetSection = this.GetSection.bind(this)
     this.onChange = this.onChange.bind(this)
+
   }
-  async componentWillMount() {
+  async componentDidMount() {
     let res = await axios.get(API)
-    console.log(res.data.results)
     if (res) {
-      this.setState({ posts: res.data.results })
+      this.setState({ posts: res.data.results, allposts: res.data.results, sections: res.data.results })
     }
-
-    // fetch(API + DEFAULT_QUERY)
-    //   .then(response => response.json())
-    //   .then(data =>
-    //     // console.log(data.results)
-    //     this.setState({ posts: data.results, isLoading: false })
-
-    //   );
   }
 
-  GetSection() {
-    let p = this.state.posts
-
-  }
   onChange(e) {
-    let myArr = []
-    console.log(e.target.value, "akjdshadhkjks")
-    let myposts = this.state.posts
+    let myArr = [];
+    let myposts = null;
+    myposts = this.state.allposts;
     for (let obj of myposts) {
 
-      if (obj.section == e.target.value) {
+      if (obj.section === e.target.value) {
         myArr.push(obj);
       }
 
     }
-    console.log(myArr,"myArrmyArrmyArrmyArrmyArrmyArr")
     this.setState({
       posts: myArr
     })
 
   }
 
+
+
   render() {
-    const { posts } = this.state;
-    console.log(posts)
+    var { allposts, posts, sections } = this.state;
+
+    let sortedSections = [...new Map(sections.map(o => [o.section, o])).values()];
+
     return (
+
+
       <div className="topDiv" >
-        <select onChange={(e) => this.onChange(e)}>
-          {
-            posts.map((section, i) => {
-              return (<option key={i} value={section.section}>{section.section}</option>)
-            })
-          }
-        </select>
 
-
-
+        <div className="form-group">
+          <label htmlFor="sectn">Select Section :</label>
+          <select onChange={(e) => this.onChange(e)}>
+            {
+              sortedSections.map((s, i) => {
+                return (<option key={i} value={s.section}>{s.section}</option>)
+              })
+            }
+          </select>
+        </div>
         {posts.map(post =>
           <div key={post.title}>
             <a href={post.short_url} target="_blank" rel="noopener noreferrer">
@@ -76,7 +70,14 @@ class App extends Component {
                 {post.title}
               </h4>
             </a>
-            <h5>{post.abstract}</h5>
+            <h5>{post.section}</h5>
+            <p>{post.abstract}</p>
+            {post.des_facet.map(des =>
+              <p key={des}>{des}</p>
+            )}
+
+
+
             <p>{post.created_date}</p>
             <p>{post.updated_date}</p>
             <p>{post.published_date}</p>
